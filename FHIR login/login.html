@@ -1,0 +1,44 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>FHIR Person 登入</title>
+</head>
+<body>
+  <h2>FHIR Person 登入系統</h2>
+  <nav>
+    <a href="/login.html">登入</a> |
+    <a href="/register.html">註冊</a> |
+    <a href="/forgot.html">忘記帳號</a>
+  </nav>
+
+  <form id="loginForm">
+    <label>帳號（login-id / email）:<br>
+      <input type="text" id="loginId" required>
+    </label><br><br>
+    <label>密碼:<br>
+      <input type="password" id="password" required>
+    </label><br><br>
+    <button type="submit">登入</button>
+  </form>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const loginId = document.getElementById('loginId').value;
+      const password = document.getElementById('password').value;
+
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ loginId, password })
+      });
+
+      const result = await res.json();
+      document.getElementById('output').textContent = JSON.stringify(result, null, 2);
+    });
+  </script>
+</body>
+</html>

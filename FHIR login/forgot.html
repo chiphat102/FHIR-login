@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>忘記密碼 / 重設密碼</title>
+</head>
+<body>
+  <nav>
+    <a href="/login.html">登入</a> |
+    <a href="/register.html">註冊</a> |
+    <a href="/forgot.html">忘記密碼</a>
+  </nav>
+  <hr>
+
+  <h2 id="title">忘記密碼</h2>
+
+  <form id="emailForm" style="display: none;">
+    <label>請輸入您的 Email：<br>
+      <input type="email" id="email" required>
+    </label><br><br>
+    <button type="submit">寄送重設密碼連結</button>
+  </form>
+
+  <form id="resetForm" style="display: none;">
+    <label>請輸入新密碼：<br>
+      <input type="password" id="password" required>
+    </label><br><br>
+    <button type="submit">重設密碼</button>
+  </form>
+
+  <pre id="output"></pre>
+
+  <script>
+    const token = new URLSearchParams(window.location.search).get('token');
+
+    if (token) {
+      document.getElementById('title').textContent = '重設密碼';
+      document.getElementById('resetForm').style.display = 'block';
+
+      document.getElementById('resetForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const password = document.getElementById('password').value;
+
+        const res = await fetch('/api/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, password })
+        });
+
+        const result = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(result, null, 2);
+      });
+
+    } else {
+      document.getElementById('emailForm').style.display = 'block';
+
+      document.getElementById('emailForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+
+        const res = await fetch('/api/request-reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const result = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(result, null, 2);
+      });
+    }
+  </script>
+</body>
+</html>

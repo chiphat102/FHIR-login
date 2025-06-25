@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>重設密碼</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1em;
+    }
+    nav a {
+      margin-right: 1em;
+      text-decoration: none;
+      color: #007BFF;
+    }
+    nav {
+      margin-bottom: 1em;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 1em;
+      border-radius: 8px;
+      margin-top: 1em;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/login.html">登入</a> |
+    <a href="/register.html">註冊</a> |
+    <a href="/forgot.html">忘記密碼</a>
+  </nav>
+
+  <h2>重設密碼</h2>
+  <label>請輸入新密碼：<br>
+    <input type="password" id="newPassword" required>
+    <input type="checkbox" onclick="togglePassword()"> 顯示密碼
+  </label><br><br>
+
+  <button id="resetBtn">重設密碼</button>
+
+  <pre id="resultOutput"></pre>
+
+  <script>
+    // 切換顯示密碼
+    function togglePassword() {
+      const input = document.getElementById("newPassword");
+      input.type = input.type === "password" ? "text" : "password";
+    }
+
+    const token = new URLSearchParams(location.search).get("token");
+
+    document.getElementById("resetBtn").addEventListener("click", async () => {
+      const password = document.getElementById("newPassword").value.trim();
+
+      if (!password) {
+        alert("請輸入新密碼");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/reset-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, password }) // ✅ 要與後端一致
+        });
+
+        const result = await res.json();
+        document.getElementById("resultOutput").textContent =
+          JSON.stringify(result, null, 2);
+      } catch (err) {
+        document.getElementById("resultOutput").textContent =
+          "發生錯誤：" + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

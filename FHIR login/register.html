@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>FHIR 註冊</title>
+</head>
+<body>
+  <h2>註冊帳號</h2>
+  <nav>
+    <a href="/login.html">登入</a> |
+    <a href="/register.html">註冊</a> |
+    <a href="/forgot.html">忘記帳號</a>
+  </nav>
+  <form id="registerForm">
+    <label>姓名:<br><input type="text" id="name" required></label><br><br>
+    <label>Login ID:<br><input type="text" id="loginId" required></label><br><br>
+    <label>Email:<br><input type="email" id="email" required></label><br><br>
+    <label>手機號碼:<br><input type ="tel" id="phone" required></label><br><br>
+    <label>出生日:<br><input type="date" id="birthday" required></label><br><br>
+    <label>密碼:<br><input type="password" id="password" required></label><br><br>
+    
+    <button type="submit">註冊</button>
+  </form>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById('name').value,
+        loginId: document.getElementById('loginId').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        birthday: document.getElementById('birthday').value,
+        password: document.getElementById('password').value
+      };
+
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      document.getElementById('output').textContent = JSON.stringify(result, null, 2);
+    });
+  </script>
+</body>
+</html>
+
